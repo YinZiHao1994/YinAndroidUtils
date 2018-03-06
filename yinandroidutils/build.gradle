@@ -6,10 +6,10 @@ android {
     compileSdkVersion 26
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 16
         targetSdkVersion 26
-        versionCode 3
-        versionName "1.6.0"
+        versionCode 4
+        versionName "1.6.1"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -42,7 +42,7 @@ publish {
     userOrg = 'yinzihaoos'//bintray.com用户名
     groupId = 'com.yinzihao'//jcenter上的路径
     artifactId = 'YinAndroidUtils'//项目名称
-    publishVersion = '1.6.0'//版本号
+    publishVersion = '1.6.1'//版本号
     desc = 'an android utils library'//描述，不重要
     website = 'https://github.com/YinZiHao1994/YinAndroidUtils.git'//网站
 }
