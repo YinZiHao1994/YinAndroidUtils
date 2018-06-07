@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
 /**
@@ -17,13 +18,19 @@ import android.support.v4.content.ContextCompat;
 public class PermissionManager {
 
     private Activity activity;
+    private Fragment fragment;
     private PermissionResultCallBack permissionResultCallBack;
 
     private static final int REQUEST_CODE = 1994;
 
     public PermissionManager(Activity activity, PermissionResultCallBack permissionResultCallBack) {
-
         this.activity = activity;
+        this.permissionResultCallBack = permissionResultCallBack;
+    }
+
+    public PermissionManager(Fragment fragment, PermissionResultCallBack permissionResultCallBack) {
+        this.fragment = fragment;
+        this.activity = fragment.getActivity();
         this.permissionResultCallBack = permissionResultCallBack;
     }
 
@@ -58,7 +65,11 @@ public class PermissionManager {
             }
         } else {
             // 注意：如果AndroidManifest.xml中没有进行权限声明，这里配置了也是无效的，不会有弹窗提示。
-            ActivityCompat.requestPermissions(activity, permissions, REQUEST_CODE);
+            if (fragment != null) {
+                fragment.requestPermissions(permissions, REQUEST_CODE);
+            } else {
+                ActivityCompat.requestPermissions(activity, permissions, REQUEST_CODE);
+            }
         }
     }
 

@@ -7,12 +7,17 @@
     android:orientation="vertical"
     tools:context="com.source.yin.yinandroidutilssample.MainActivity">
 
-
     <Button
-        android:id="@+id/btn_permission_manager"
+        android:id="@+id/btn_permission_manager_in_activity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="权限工具" />
+        android:text="Activity 中申请权限" />
+
+    <Button
+        android:id="@+id/btn_permission_manager_in_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fragment 中申请权限" />
 
 
 </LinearLayout>

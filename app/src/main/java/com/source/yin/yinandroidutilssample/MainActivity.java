@@ -7,16 +7,19 @@ import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button btnPermissionManager;
+    private Button btnPermissionManagerInActivity;
+    private Button btnPermissionManagerInFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnPermissionManager = findViewById(R.id.btn_permission_manager);
+        btnPermissionManagerInActivity = findViewById(R.id.btn_permission_manager_in_activity);
+        btnPermissionManagerInFragment = findViewById(R.id.btn_permission_manager_in_fragment);
 
-        btnPermissionManager.setOnClickListener(this);
+        btnPermissionManagerInActivity.setOnClickListener(this);
+        btnPermissionManagerInFragment.setOnClickListener(this);
     }
 
 
@@ -24,8 +27,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         Intent intent;
         switch (v.getId()) {
-            case R.id.btn_permission_manager:
+            case R.id.btn_permission_manager_in_activity:
                 intent = new Intent(getApplicationContext(), PermissionManagerActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.btn_permission_manager_in_fragment:
+                intent = new Intent(getApplicationContext(), ContainFragmentActivity.class);
                 startActivity(intent);
                 break;
         }
