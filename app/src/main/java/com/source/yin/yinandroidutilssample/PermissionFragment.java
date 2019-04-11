@@ -25,13 +25,13 @@ public class PermissionFragment extends Fragment {
             public void onClick(View v) {
                 permissionManager = new PermissionManager(PermissionFragment.this, new PermissionManager.PermissionResultCallBack() {
                     @Override
-                    public void onPermissionGranted(String permission) {
-                        toast(permission + "权限成功");
+                    public void onPermissionGranted(String[] permissions) {
+                        toast(permissions + "权限成功");
                     }
 
                     @Override
-                    public void onPermissionDenied(String permission) {
-                        toast(permission + "权限失败");
+                    public void onPermissionDenied(String[] permissions) {
+                        toast(permissions + "权限失败");
                     }
 
                     @Override

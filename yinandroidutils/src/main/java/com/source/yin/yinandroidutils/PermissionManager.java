@@ -8,6 +8,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * android 6.0 权限管理工具，调用获取相应权限方法，并在调用（构造器传入）的 activity 的
  * {@link Activity#onRequestPermissionsResult(int, String[], int[])}回调处
@@ -35,7 +38,7 @@ public class PermissionManager {
     }
 
 
-    public void cameraPermission() {
+    public void camera() {
         String[] permissions = {Manifest.permission.CAMERA};
         dealWithPermission(permissions);
     }
@@ -50,25 +53,49 @@ public class PermissionManager {
         dealWithPermission(permissions);
     }
 
+    public void readPhoneState() {
+        String[] permissions = {Manifest.permission.READ_PHONE_STATE};
+        dealWithPermission(permissions);
+    }
 
-    private void dealWithPermission(String[] permissions) {
+    public void location() {
+        String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,};
+        dealWithPermission(permissions);
+    }
+
+
+    public void dealWithPermission(String[] permissions) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             //6.0 以下系统
             if (permissionResultCallBack != null) {
-                permissionResultCallBack.onPermissionGranted(permissions[0]);
+                permissionResultCallBack.onPermissionGranted(permissions);
             }
             return;
         }
-        if (isPermissionGranted(permissions[0])) {
-            if (permissionResultCallBack != null) {
-                permissionResultCallBack.onPermissionGranted(permissions[0]);
+
+        List<String> grantedPermissions = new ArrayList<>();
+        List<String> deniedPermissions = new ArrayList<>();
+
+        for (String permission : permissions) {
+            boolean permissionGranted = isPermissionGranted(permission);
+            if (permissionGranted) {
+                grantedPermissions.add(permission);
+            } else {
+                deniedPermissions.add(permission);
             }
-        } else {
+        }
+        if (grantedPermissions.size() > 0) {
+            if (permissionResultCallBack != null) {
+                permissionResultCallBack.onPermissionGranted(grantedPermissions.toArray(new String[0]));
+            }
+        }
+        if (deniedPermissions.size() > 0) {
             // 注意：如果AndroidManifest.xml中没有进行权限声明，这里配置了也是无效的，不会有弹窗提示。
             if (fragment != null) {
                 fragment.requestPermissions(permissions, REQUEST_CODE);
             } else {
-                ActivityCompat.requestPermissions(activity, permissions, REQUEST_CODE);
+                ActivityCompat.requestPermissions(activity, deniedPermissions.toArray(new String[0]), REQUEST_CODE);
             }
         }
     }
@@ -80,19 +107,34 @@ public class PermissionManager {
     }
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (permissionResultCallBack != null) {
-            if (requestCode == REQUEST_CODE) {
+//        Log.e("yzh", "onRequestPermissionsResult\npermissions = " + Arrays.toString(permissions) + "\ngrantResults = " + Arrays.toString(grantResults));
+        if (requestCode == REQUEST_CODE) {
+            if (permissionResultCallBack != null) {
                 if (grantResults.length > 0) {
-                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        permissionResultCallBack.onPermissionGranted(permissions[0]);
-                    } else {
-                        permissionResultCallBack.onPermissionDenied(permissions[0]);
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permissions[0])) {
-                            permissionResultCallBack.shouldShowRequestPermissionRationale(permissions[0]);
+                    List<String> grantedPermissions = new ArrayList<>();
+                    List<String> deniedPermissions = new ArrayList<>();
+                    for (int i = 0; i < permissions.length && i < grantResults.length; i++) {
+                        String permission = permissions[i];
+                        int grantResult = grantResults[i];
+                        if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                            grantedPermissions.add(permission);
+                        } else {
+                            deniedPermissions.add(permission);
+                        }
+                    }
+                    if (grantedPermissions.size() > 0) {
+                        permissionResultCallBack.onPermissionGranted(grantedPermissions.toArray(new String[0]));
+                    }
+                    if (deniedPermissions.size() > 0) {
+                        permissionResultCallBack.onPermissionDenied(deniedPermissions.toArray(new String[0]));
+                        for (String deniedPermission : deniedPermissions) {
+                            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, deniedPermission)) {
+                                permissionResultCallBack.shouldShowRequestPermissionRationale(deniedPermission);
+                            }
                         }
                     }
                 } else {
-                    permissionResultCallBack.onPermissionDenied(permissions[0]);
+                    permissionResultCallBack.onPermissionDenied(permissions);
                 }
             }
         }
@@ -100,9 +142,9 @@ public class PermissionManager {
 
 
     public interface PermissionResultCallBack {
-        void onPermissionGranted(String permission);
+        void onPermissionGranted(String[] permissions);
 
-        void onPermissionDenied(String permission);
+        void onPermissionDenied(String[] permissions);
 
         void shouldShowRequestPermissionRationale(String permission);
 

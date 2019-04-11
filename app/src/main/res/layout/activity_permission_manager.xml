@@ -25,4 +25,10 @@
         android:layout_height="wrap_content"
         android:text="写储存卡" />
 
+    <Button
+        android:id="@+id/btn_mix"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="同时请求多个权限" />
+
 </LinearLayout>
